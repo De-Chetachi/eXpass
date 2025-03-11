@@ -14,8 +14,11 @@ this service is responsible for
 The user object contains three properties
 ---
 User: {
+
     username: string
+
     email: string; must be a valid email
+    
     password: string -> must be atleat 8characters long
 }
 
