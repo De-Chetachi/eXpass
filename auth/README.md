@@ -1,14 +1,17 @@
 # AUTH SERVICE
 
 this service is responsible for
----
-creating  users
----
-authenticating and authorizing users
----
-restriction of users (if needed) 
----
-the user object contains two properties
+
+
+* creating  users
+
+
+* authenticating and authorizing users
+
+
+* restriction of users (if needed) 
+
+The user object contains three properties
 ---
 User: {
     username: string
