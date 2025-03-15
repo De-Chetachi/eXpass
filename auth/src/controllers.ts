@@ -1,38 +1,44 @@
 import { Request, Response} from "express";
-import { validationResult } from "express-validator";
-import { AuthValidationError } from './errors/authValidationError';
+import { BadRequestError } from "./errors/badRequestError";
+import { Password } from "./utilities/password";
+import { User } from './models';
+import { getJwt } from "./utilities/jwtoken";
+
 class AuthController {
-//   constructor() {
-//     this.auth = new AuthService();
-//   }
-  static login(req: Request, res: Response) {
-    //const { email, password } = req.body;
-    // const token = this.auth.login(email, password);
-    res.send({to: "hello world welsome to tickethub"});
-    console.log("hello world welsome to tickethub");
+
+  static async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) throw new BadRequestError('invalid credentials');
+
+    const ispassword = await Password.comparePassword(user.password, password);
+    if (!ispassword) throw new BadRequestError('invalid credentials');
+
+    const userJWT = getJwt(user);
+    req.session =  { token: userJWT }
+    res.status(200).send({ status: 'success', message: 'user successfully logged in', object: user });
   }
 
-static async register(req: Request, res: Response) {
-  const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new AuthValidationError(errors.array());
-    }
-    else {
-      const { email, password, name } = req.body;
-      res.status(201).json({ email, name, password });
-    }
+  static async register(req: Request, res: Response) {
+    const { email, password, username } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) { throw new BadRequestError('Email already in use') };
+    const user = User.build({ email, password, username });
+    await user.save();
+
+    res.status(201).send({ status: 'success', message: 'user successfully created', object: user });
   }
 
-
-  static async logout(req: Request, res: Response) {
-    // this.auth.logout();
-    res.json({ message: "Logged out" });
-  }
 
   static async getUser(req: Request, res: Response) {
     
-    res.send({to: "hello world welsome to tickethub"});
-    console.log("hello world welsome to tickethub");
+      res.send({ status: 'success', message: 'current user', object: req.currentUser || null });
+  }
+
+  static async logout(req: Request, res: Response) {
+    req.session = null;
+    delete req.currentUser;
+    res.send({ status: 'success', message: "Logged out", object: {} });
   }
 }
 

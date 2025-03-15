@@ -15,6 +15,17 @@ spec:
       containers:
         - name: auth
           image: tickerhub/auth
+          env:
+            - name: JWT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_URI
 
 ---
 
