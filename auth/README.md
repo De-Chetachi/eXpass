@@ -31,12 +31,14 @@ bad requests return errors with appropriate status code and an error object with
 
 where Err is an object with the form
 ---
+```
 {
 
     message: string -> reason for the error
     status: 'failed'
     field: string -> optional, the value that caused the error
 }
+```
 
 
 ## Endpoints
@@ -44,7 +46,8 @@ where Err is an object with the form
 
 * POST /api/users/register
 
-
+req.body
+```
 {
 
     username: "<yourname>",
@@ -53,14 +56,20 @@ where Err is an object with the form
     password: "<yourpassword.>"
 
 }
----
+```
+
+res.json
+```
 {
     message: "User created successfully",
     status: 'succes'
     username: <yourname>
 }
+```
 
 * POST /api/users/login
+
+req.body
 ```
 {
     email: "youremailQ@gmail.com",
@@ -68,6 +77,7 @@ where Err is an object with the form
 }
 ```
 
+res.json
 ```
 {
     status: 'success',
@@ -79,12 +89,11 @@ where Err is an object with the form
 ```
 
 * GET /api/users/getUser
-{
 
-}
 ---
 if user islogged in
 
+res.json
 ```
 {
     status: 'success',
@@ -94,6 +103,7 @@ if user islogged in
 ```
 if user is not logged in
 
+res.json
 ```
 {
     status: 'success',
@@ -104,6 +114,7 @@ if user is not logged in
 
 * POST api/users/logout
 
+res.json
 ```
 {
     status: 'success',
