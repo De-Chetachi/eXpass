@@ -16,5 +16,5 @@ export const errorHandler = (
             errors: [{ message: 'something went wrong'}]
         });
     }
-
+    next();
 }

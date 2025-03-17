@@ -11,4 +11,5 @@ export const authValidationHandler = (
     if (!errors.isEmpty()) {
           throw new AuthValidationError(errors.array());
     }
+    next();
 }

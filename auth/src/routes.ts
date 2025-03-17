@@ -21,7 +21,7 @@ router.post("/login", [
     .withMessage('email must be a valid email'),
     body('password').trim().notEmpty()
     .withMessage('provide a valid password')
-], AuthController.login);
+], authValidationHandler, AuthController.login);
 
  
 router.post("/logout", AuthController.logout);

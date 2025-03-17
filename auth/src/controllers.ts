@@ -31,8 +31,12 @@ class AuthController {
 
 
   static async getUser(req: Request, res: Response) {
-    
-      res.send({ status: 'success', message: 'current user', object: req.currentUser || null });
+    if (!req.currentUser) {
+      res.status(200).send({ status: 'success', message: 'current user', object: null});
+    }
+    else{
+      res.status(200).send({ status: 'success', message: 'current user', object: req.currentUser});
+    }
   }
 
   static async logout(req: Request, res: Response) {
