@@ -1,12 +1,15 @@
 import { Request, Response} from "express";
-import { BadRequestError } from "./errors/badRequestError";
-import { Password } from "./utilities/password";
-import { User } from './models';
-import { getJwt } from "./utilities/jwtoken";
+import { BadRequestError } from "@expasshub/utils";
+import { Password } from "../utilities/password";
+import { User } from '../models/models';
+import { getJwt } from "../utilities/jwtoken";
 
 class AuthController {
 
   static async login(req: Request, res: Response) {
+    if (req.currentUser) {
+      throw new BadRequestError('already logged in');
+    }
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) throw new BadRequestError('invalid credentials');
@@ -20,6 +23,9 @@ class AuthController {
   }
 
   static async register(req: Request, res: Response) {
+    if (req.currentUser) {
+      throw new BadRequestError('already logged in');
+    }
     const { email, password, username } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) { throw new BadRequestError('Email already in use') };

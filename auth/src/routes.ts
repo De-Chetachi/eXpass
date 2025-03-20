@@ -1,9 +1,9 @@
 import express from "express";
 import { body, validationResult } from 'express-validator';
-import { authValidationHandler } from "./middlewares/authValidationHandler";
-import { currentUser } from "./middlewares/currentUser";
+import { authValidationHandler } from "@expasshub/utils";
+import { currentUser } from "@expasshub/utils";
 
-const AuthController = require("./controllers");
+const AuthController = require("./controllers/controllers");
 
 const router = express.Router();
 
@@ -14,14 +14,14 @@ router.post("/register", [
     .withMessage('password must be atleast 8 characters long'),
     body('username').notEmpty()
     .withMessage('please provide a username')
-], authValidationHandler, AuthController.register);
+], currentUser, authValidationHandler, AuthController.register);
 
 router.post("/login", [
     body('email').isEmail()
     .withMessage('email must be a valid email'),
     body('password').trim().notEmpty()
     .withMessage('provide a valid password')
-], authValidationHandler, AuthController.login);
+], currentUser, authValidationHandler, AuthController.login);
 
  
 router.post("/logout", AuthController.logout);

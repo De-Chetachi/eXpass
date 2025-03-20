@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../app';
+import { app } from '../../app';
 
 
 //signup test
@@ -14,6 +14,22 @@ it('returns a 201 on successful sign up',
             username: 'cheta',
         })
         .expect(201);
+    }
+);
+
+
+
+it('returns a 401 when a signed in user is trying to register',
+    async () => {
+        await getAuthCookie();
+        await request(app)
+        .post('/api/users/register')
+        .send({
+            email: 'cheta@gmail.com',
+            password: 'password',
+            username: 'cheta',
+        })
+        .expect(400);
     }
 );
 
@@ -127,6 +143,7 @@ it('returns a 400 on trying to login a non existent account',
     }
 );
 
+
 it('returns a 200 and sets cookie on successful login',
     async () => {
         await request(app)
@@ -148,6 +165,18 @@ it('returns a 200 and sets cookie on successful login',
     expect(res.get('Set-Cookie')).toBeDefined();
     }
 );
+
+it('returns a 400 when a logged in user is trying to log in', async () => {
+    const cookie = await getAuthCookie();
+    await request(app)
+    .post('/api/users/login')
+    .set('Cookie', cookie)
+    .send({
+        email: 'cheta@gmail.com',
+        password: 'password',
+    })
+    .expect(400);
+})
 
 it('fails for invalid credentials',
     async () => {
@@ -181,7 +210,7 @@ it('returns 200 for logged in user', async () => {
         .send()
         .expect(200);
     expect(res.body.object.email).toEqual('cheta@gmail.com');
-})
+});
 
 
 

@@ -3,8 +3,8 @@ import 'express-async-errors';
 import express from 'express';
 import { json } from 'body-parser' ;
 import cookieSession from 'cookie-session';
-import { errorHandler } from './middlewares/errorHandler';
-import { NotFoundError } from './errors/notFoundError';
+import { errorHandler } from '@expasshub/utils';
+import { NotFoundError } from '@expasshub/utils';
 
 //import mongoose from 'mongoose';
 const routes = require('./routes');

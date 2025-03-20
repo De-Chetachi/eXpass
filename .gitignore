@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 commands.sh
+utils/publish.sh

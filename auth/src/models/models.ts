@@ -1,6 +1,6 @@
 //import { Mongoose } from 'mongoose';
 import mongoose from 'mongoose';
-import { Password } from "./utilities/password";
+import { Password } from "../utilities/password";
 
 // a user interface FOR EFFECTIVE USER TYPE CHECKING
 interface UserAttrs {
