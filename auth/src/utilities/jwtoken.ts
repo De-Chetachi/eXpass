@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { UserDoc } from '../models/models';
+import { UserDoc } from '../models/userModel';
 
 
 const getJwt = (user: UserDoc) => {

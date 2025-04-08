@@ -1,7 +1,6 @@
 import { Request, Response} from "express";
-import { BadRequestError } from "@expasshub/utils";
-import { Password } from "../utilities/password";
-import { User } from '../models/models';
+import { BadRequestError, Password } from "@expasshub/utils";
+import { User } from '../models/userModel';
 import { getJwt } from "../utilities/jwtoken";
 
 class AuthController {

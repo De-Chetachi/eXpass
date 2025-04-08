@@ -11,10 +11,26 @@ spec:
     - host: tickethub.dev
       http:
         paths:
+
+          # - path: /api/otpass?(.*)
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: otpass-srv
+          #       port:
+          #         number: 4000
+                  
           - path: /api/users?(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: auth-srv
+                port:
+                  number: 5000
+          - path: /api/tickets?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ticker-srv
                 port:
                   number: 5000

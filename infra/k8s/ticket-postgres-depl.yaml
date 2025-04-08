@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket-postgres
+  template:
+    metadata:
+      labels:
+        app: ticket-postgres
+    spec:
+      containers:
+        - name: ticket-postgres
+          image: postgres:14
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: ticket-pass
+                  key: TICKET_PASS
+
+            - name: POSTGRES_USER
+              valueFrom: 
+                secretKeyRef:
+                  name: ticket-user
+                  key: TICKET_USER
+
+            - name: POSTGRES_DB
+              valueFrom: 
+                secretKeyRef:
+                  name: ticket-db
+                  key: TICKET_DB
+      
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: ticketdata
+      volumes:
+        - name: ticketdata
+          persistentVolumeClaim:
+            claimName: ticket-postgres-volume-claim
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticket-postgres-SRV
+  labels:
+    app: ticket-postgres
+spec:
+  # type: NodePort
+  selector:
+    app: ticket-postgres
+  ports:
+    - port: 5432
+
+

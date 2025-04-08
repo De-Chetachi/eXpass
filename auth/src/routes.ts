@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator';
 import { authValidationHandler } from "@expasshub/utils";
 import { currentUser } from "@expasshub/utils";
 
-const AuthController = require("./controllers/controllers");
+const AuthController = require("./controllers/userController");
 
 const router = express.Router();
 
@@ -16,12 +16,7 @@ router.post("/register", [
     .withMessage('please provide a username')
 ], currentUser, authValidationHandler, AuthController.register);
 
-router.post("/login", [
-    body('email').isEmail()
-    .withMessage('email must be a valid email'),
-    body('password').trim().notEmpty()
-    .withMessage('provide a valid password')
-], currentUser, authValidationHandler, AuthController.login);
+router.post("/login", currentUser, AuthController.login);
 
  
 router.post("/logout", AuthController.logout);

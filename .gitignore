@@ -131,3 +131,8 @@ dist
 
 commands.sh
 utils/publish.sh
+
+infra/k8s/otp-depl.txt
+
+infra/k8s/otp-mongo-depl.txt
+tickets/packs.sh

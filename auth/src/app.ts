@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import 'express-async-errors'; 
 import express from 'express';
 import { json } from 'body-parser' ;
@@ -17,10 +17,10 @@ app.use(cookieSession({
   secure: process.env.NODE_ENV !== 'test',
 }));
 
-app.use((req: Request, res: Response, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     console.log(req.path, req.method);
     next();
-})
+});
 
 app.use("/api/users", routes);
 

@@ -1,12 +1,12 @@
 //import { Mongoose } from 'mongoose';
 import mongoose from 'mongoose';
-import { Password } from "../utilities/password";
+import { Password } from  "@expasshub/utils";
 
 // a user interface FOR EFFECTIVE USER TYPE CHECKING
 interface UserAttrs {
     email: string;
     password: string;
-    username: string
+    username: string;
 }
 
 //interface that defines what the properties of a user are
@@ -36,20 +36,25 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
     
 },
 {
-    // toJSON: {
-    //     transform(doc, ret) {
-    //         ret.id = ret._id;
-    //         delete ret._id;
-    //         delete ret.password;
-    //         delete ret.__v;
-    //         // delete ret.created_at;
-    //         // delete ret.updated_at;
-    //     }
-    // },
+    toJSON: {
+        transform(doc, ret) {
+             ret.id = ret._id;
+             delete ret._id;
+             delete ret.password;
+             delete ret.__v;
+             // delete ret.created_at;
+             // delete ret.updated_at;
+        }
+    },
     
     timestamps: true
 });

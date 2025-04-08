@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket 
+  template:
+    metadata:
+      labels:
+        app: ticket
+    spec:
+      containers:
+        - name: ticket
+          image: tickerhub/ticket
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-user
+                  key: TICKET_USER
+            - name: PSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-pass
+                  key: TICKET_PASS
+            - name: PSQL_DB
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-db
+                  key: TICKET_DB
+
+            - name: PSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-host
+                  key: TICKET_HOST
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticket-srv
+spec:
+  selector:
+    app: ticket
+  ports:
+    - name: ticket
+      protocol: TCP
+      port: 5000
+      targetPort: 5000

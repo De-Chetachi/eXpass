@@ -2,7 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 
 
-//signup test
+//------------------------------------signup test -------------------------------
 
 it('returns a 201 on successful sign up',
     async () => {
@@ -59,18 +59,6 @@ it('returns 400 for invalid email or password',
     }
 );
 
-it('returns 400 for invalid email or password', 
-    async () => {
-        return request(app)
-        .post('/api/users/register')
-        .send({
-            email: 'cheta@gmail',
-            password: 'password',
-            username: 'cheta',
-        })
-        .expect(400);
-    }
-);
 
 it('returns 400 for missing username', 
     async () => {
@@ -130,7 +118,7 @@ it('disallows duplicate account', async () => {
 })
 
 
-//signin test
+//------------------------signin test-------------------------------
 it('returns a 400 on trying to login a non existent account',
     async () => {
         await request(app)
@@ -199,7 +187,7 @@ it('fails for invalid credentials',
 );
 
 
-//get user test
+//----------------------get user test---------------------------
 
 it('returns 200 for logged in user', async () => {
 
@@ -214,7 +202,7 @@ it('returns 200 for logged in user', async () => {
 
 
 
-//logout test
+//----------------------------------logout test----------------------
 
 it('clears cookie after signout', async () => {
     await request(app)
