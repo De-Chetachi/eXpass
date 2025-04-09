@@ -1,25 +1,48 @@
 import { app } from'../app';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-import { newDb } from 'pg-mem';
+import { Password } from '@expasshub/utils';
+
+
+const { Client } = require('pg');
 
 process.env.JWT_TOKEN = 'rdfghjkl';
 declare global {
     var signIn: () => string[];
 }
 
+const client = new Client({
+    password: "my_pass"
+});
+
 beforeAll(async () => {
-    const db = newDb();
+    await client.connect().then( async ()=> {
+
+        try {
+            await client.query(`
+                CREATE TABLE tickets(
+                    id VARCHAR(225) NOT NULL,
+                    title VARCHAR(225) NOT NULL,
+                    price INT NOT NULL,
+                    userId VARCHAR(225) NOT NULL,
+                    PRIMARY KEY (id)
+                );
+            `);
+            console.log('success');
+        } catch (err: any) {
+            console.log(err.message);
+        }
+    });
 });
 
-beforeEach(() => {
-
+beforeEach(async () => {
+    await client.query('DELETE FROM tickets;');
 });
 
-afterAll(() => {
-
-}
-)
+afterAll( async () => {
+    await client.query('DROP TABLE tickets;');
+    client.end();
+});
 
 global.signIn = () => {
 //the aim of this fxn is to fake auth
@@ -41,3 +64,5 @@ global.signIn = () => {
     const base64 = Buffer.from(json_).toString('base64');
     return [`session=${base64}`];
 }
+
+module.exports = client;

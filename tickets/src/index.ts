@@ -6,6 +6,7 @@ if (!(process.env.PSQL_USER && process.env.PSQL_PASS && process.env.PSQL_DB && p
     throw new Error('psql connection parameters  required');
 }
 
+
 const client = new Client({
     user: process.env.PSQL_USER,
     database: process.env.PSQL_DB,
@@ -13,14 +14,16 @@ const client = new Client({
     host: process.env.PSQL_HOST,
     port: 5432,
 });
+
 const port = 5000;
 
-client.connect().then(() => {
-    client.query(`
+client.connect().then( async () => {
+    await client.query(`
         CREATE TABLE IF NOT EXISTS tickets (
             id VARCHAR(225) NOT NULL,
             title VARCHAR(225) NOT NULL,
             price INT NOT NULL,
+            userId VARCHAR(225) NOT NULL,
             PRIMARY KEY (id) 
         );
     `)

@@ -26,7 +26,8 @@
     "express-validator": "^7.2.1",
     "pg": "^8.14.1",
     "ts-jest": "^29.3.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "uuid": "file:../../../../../mnt/c/Users/cheta/Downloads/uuid-11.0.3.tgz"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
