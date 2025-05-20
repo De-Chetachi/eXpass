@@ -31,6 +31,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: ticker-srv
+                name: ticket-srv
                 port:
                   number: 5000

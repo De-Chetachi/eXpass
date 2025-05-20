@@ -17,7 +17,7 @@ build:
           - src: "src/**/*.ts"
             dest: .
     - image: tickerhub/ticket
-      context: ticket
+      context: tickets
       docker:
         dockerfile: Dockerfile
       sync:

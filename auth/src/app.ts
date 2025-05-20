@@ -8,13 +8,13 @@ import { NotFoundError } from '@expasshub/utils';
 
 //import mongoose from 'mongoose';
 const routes = require('./routes');
-
 const app = express();
-app.set('trust-proxy', true);
+app.set('trust proxy', true);
 app.use(json());
 app.use(cookieSession({
   signed: false,
   secure: process.env.NODE_ENV !== 'test',
+  //secure: false,
 }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {

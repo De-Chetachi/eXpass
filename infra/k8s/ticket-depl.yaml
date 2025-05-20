@@ -12,11 +12,21 @@ spec:
       labels:
         app: ticket
     spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox:latest # A lightweight utility image
+          command: ['sh', '-c', 'until nc -zv rabbit 5672; do echo "Waiting for RabbitMQ..."; sleep 5; done; echo "RabbitMQ is ready!"']
+
       containers:
         - name: ticket
           image: tickerhub/ticket
           imagePullPolicy: IfNotPresent
           env:
+            - name: JWT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
             - name: PSQL_USER
               valueFrom:
                 secretKeyRef:
@@ -38,6 +48,12 @@ spec:
                 secretKeyRef:
                   name: ticket-host
                   key: TICKET_HOST
+
+            - name: AMQP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: amqp-url
+                  key: AMQP_URL
         
 ---
 

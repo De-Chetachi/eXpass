@@ -104,13 +104,8 @@ describe('test for POST /api/tickets', () => {
 });
 
 /*------------------------------- get /api/tickts/:id -------------------------------------*/
-describe('test for get /api/tickets/:id', () => {
-    
-    it('it should return 404 for missing id', async () => {
-        await myApp.get('/api/tickets')
-        .expect(404);
 
-    });
+describe('test for get /api/tickets/:id', () => {
 
     it('should return 404 if a ticket with the given id doesnt exist', async () => {
         const res = await myApp.get('/api/tickets/vghbjnkj')
@@ -137,12 +132,100 @@ describe('test for get /api/tickets/:id', () => {
 /*------------------ get /api/tickets -------------------------------------*/
 
 describe('tests the index route GET /api/tickets', () => {
-    it('should return an empty list if there are not tickets availble', async () => {
 
+    const addTicket = async (title: string, price: number) => {
+        const res = await myApp.post('/api/tickets')
+        .set('Cookie', global.signIn())
+        .send({ title, price });
+    }
+
+    it('should always return 200', async () => {
+        await myApp.get('/api/tickets')
+        .expect(200);
+    });
+
+    it('should return an empty list if there are no tickets availble', async () => {
+        const res = await myApp.get('/api/tickets')
+        expect(res.body.object.length).toEqual(0);
+        const tickets = await client.query('SELECT * FROM tickets;');
+        expect(tickets.rowCount).toEqual(0);
     });
 
     it('should return a list of all available tickets', async () => {
+        const tickets = [
+            {title: "book", price: 200},
+            { title: "horse race", price: 500},
+            {title: "concert", price: 1000}
+        ]
+        tickets.map((ticket) => {
+            addTicket(ticket.title, ticket.price)
+        });
+        const res = await myApp.get('/api/tickets');
+        expect(res.body.object.length).toEqual(3);
         
+        const ticks = await client.query('SELECT * FROM tickets;');
+        expect(ticks.rowCount).toEqual(3);
+    })
+
+});
+
+/**----------------DELETE /api/ticket/:id ----------------------- */
+describe('tests the DELETE /api/tickets/:id endpoint', () => {
+    it("should return 404 if the ticket does not exist", async () => {
+        myApp.delete('/api/tickets/jnkmlfgg')
+        .expect(404)
+    })
+
+    it('should delete the specified ticket with status 200', async () => {
+        const title = "book review";
+        const price = 200;
+        const res = await myApp.post('/api/tickets')
+            .set('Cookie', global.signIn())
+            .send({ title, price })
+            expect(res.body.status).toEqual('success');
+        const id = res.body.object.id;
+
+        const ticks = await client.query('SELECT * FROM tickets;');
+        expect(ticks.rowCount).toEqual(1);
+
+        const del = await myApp.delete(`/api/tickets/${id}`)
+            .set('Cookie', global.signIn())
+            .expect(200);
+        
+        const tick  = await client.query('SELECT * FROM tickets;');
+        expect(tick.rowCount).toEqual(0);
+})
+});
+
+
+/**------------------UPDATE /api/tickets/:id ---------------------- */
+
+describe('tests the PUT /api/tickets/:id endpoint', () => {
+
+    it("should return 404 if ticket with given id does not exist", async () => {
+        myApp.put('/api/tickets/fghj;hglfhdszdfhfkjl')
+        .expect(404)
+    })
+
+    it('should return 200', async () => {
+        const title = "book review";
+        const price = 200;
+        const res = await myApp.post('/api/tickets')
+            .set('Cookie', global.signIn())
+            .send({ title, price })
+            expect(res.body.status).toEqual('success');
+        const id = res.body.object.id;
+
+        const update = await myApp.put(`/api/tickets/${id}`)
+            .set('Cookie', global.signIn())
+            .send({ title: "concert", price: 100 })
+            .expect(200);
+        
+        const tickets  = await client.query('SELECT * FROM tickets;');
+        expect(tickets.rowCount).toEqual(1);
+        expect(tickets.rows[0].title).toEqual("concert");
+        expect(tickets.rows[0].price).toEqual(100)
+        expect(tickets.rows[0].id).toEqual(id)
     })
 
 });
