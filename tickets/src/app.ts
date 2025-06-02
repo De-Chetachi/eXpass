@@ -25,7 +25,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use('/api/tickets', routes);
 
-// app.get('*', () => {
+// app.get('/*', () => {
 //     throw new NotFoundError();
 // });
 

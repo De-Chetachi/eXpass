@@ -1,11 +1,7 @@
 //import mongoose from 'mongoose';
 import { app } from './app';
 import { Client } from 'pg';
-import rabbit from './rabbit';
-import { exchange } from './events/event_types';
-import TicketCreatedEventHandler from './events/ticket_created';
-import TicketDeletdEventHandler from './events/ticket_deleted';
-import TicketUpdatedEventHandler from './events/ticket_updated';
+import { rabbit_events } from './rabbit';
 
 
 if (!(process.env.PSQL_USER && process.env.PSQL_PASS && process.env.PSQL_DB && process.env.PSQL_HOST)) {
@@ -34,19 +30,15 @@ client.connect().then( async () => {
             title VARCHAR(225) NOT NULL,
             price INT NOT NULL,
             userId VARCHAR(225) NOT NULL,
-            PRIMARY KEY (id) 
+            version INT NOT NULL,
+            orderId VARCHAR,
+            PRIMARY KEY (id)
         );
     `);
-    console.log(process.env.AMQP_URL);
-    await rabbit.connect(process.env.AMQP_URL!);
-    await rabbit.exchange(exchange.ticket, 'direct');
-    await TicketCreatedEventHandler.ticketCreatedQueue(rabbit);
-    await TicketDeletdEventHandler.ticketDeletedQueue(rabbit);
-    await TicketUpdatedEventHandler.ticketUpdatedQueue(rabbit);
+    await rabbit_events();
     app.listen(port, () => {
         console.log(`ticket app is listening on port ${port}`);
     });
 }).catch((err: Error) => {
     console.log(err.message);
 });
-//module.exports = client;

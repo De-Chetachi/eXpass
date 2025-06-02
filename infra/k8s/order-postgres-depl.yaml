@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: ticket-postgres-depl
+  name: order-postgres-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ticket-postgres
+      app: order-postgres
   template:
     metadata:
       labels:
-        app: ticket-postgres
+        app: order-postgres
     spec:
       containers:
-        - name: ticket-postgres
+        - name: order-postgres
           image: postgres:14
           imagePullPolicy: IfNotPresent
           ports:
@@ -21,44 +21,43 @@ spec:
           env:
             - name: POSTGRES_INITDB_ARGS
               value: "--auth-host=scram-sha-256"
-
+              
             - name: POSTGRES_PASSWORD
               valueFrom: 
                 secretKeyRef:
-                  name: ticket-pass
-                  key: TICKET_PASS
+                  name: order-pass
+                  key: ORDER_PASS
 
             - name: POSTGRES_USER
               valueFrom: 
                 secretKeyRef:
-                  name: ticket-user
-                  key: TICKET_USER
+                  name: order-user
+                  key: ORDER_USER
 
             - name: POSTGRES_DB
               valueFrom: 
                 secretKeyRef:
-                  name: ticket-db
-                  key: TICKET_DB
+                  name: order-db
+                  key: ORDER_DB
       
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: ticketdata
+              name: orderdata
       volumes:
-        - name: ticketdata
+        - name: orderdata
           persistentVolumeClaim:
-            claimName: ticket-postgres-volume-claim
+            claimName: order-postgres-volume-claim
 
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ticket-postgres-srv
+  name: order-postgres-srv
   labels:
-    app: ticket-postgres
+    app: order-postgres
 spec:
-  # type: NodePort
   selector:
-    app: ticket-postgres
+    app: order-postgres
   ports:
     - port: 5432

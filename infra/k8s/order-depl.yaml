@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ticket-depl
+  name: order-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ticket 
+      app: order 
   template:
     metadata:
       labels:
-        app: ticket
+        app: order
     spec:
       initContainers:
         - name: wait-for-rabbitmq
@@ -19,12 +19,12 @@ spec:
 
         - name: wait-for-postgres
           image: busybox:latest
-          command: ['sh', '-c', 'until nc -zv ticket-postgres-srv 5432; do echo "Waiting for PostgreSQL..."; sleep 5; done; echo "PostgreSQL is ready!"']
+          command: ['sh', '-c', 'until nc -zv order-postgres-srv 5432; do echo "Waiting for PostgreSQL..."; sleep 5; done; echo "PostgreSQL is ready!"']
 
 
       containers:
-        - name: ticket
-          image: tickerhub/ticket
+        - name: order
+          image: tickerhub/order
           imagePullPolicy: IfNotPresent
           env:
             - name: JWT_TOKEN
@@ -32,27 +32,27 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-            - name: PSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: ticket-user
-                  key: TICKET_USER
             - name: PSQL_PASS
               valueFrom:
                 secretKeyRef:
-                  name: ticket-pass
-                  key: TICKET_PASS
+                  name: order-pass
+                  key: ORDER_PASS
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: order-user
+                  key: ORDER_USER
             - name: PSQL_DB
               valueFrom:
                 secretKeyRef:
-                  name: ticket-db
-                  key: TICKET_DB
+                  name: order-db
+                  key: ORDER_DB
 
             - name: PSQL_HOST
               valueFrom:
                 secretKeyRef:
-                  name: ticket-host
-                  key: TICKET_HOST
+                  name: order-host
+                  key: ORDER_HOST
 
             - name: AMQP_URL
               valueFrom:
@@ -65,12 +65,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ticket-srv
+  name: order-srv
 spec:
   selector:
-    app: ticket
+    app: order
   ports:
-    - name: ticket
+    - name: order
       protocol: TCP
       port: 5000
       targetPort: 5000

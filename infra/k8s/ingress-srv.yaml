@@ -27,6 +27,7 @@ spec:
                 name: auth-srv
                 port:
                   number: 5000
+
           - path: /api/tickets?(.*)
             pathType: ImplementationSpecific
             backend:
@@ -34,3 +35,13 @@ spec:
                 name: ticket-srv
                 port:
                   number: 5000
+
+          - path: /api/orders?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-srv
+                port:
+                  number: 5000
+
+          

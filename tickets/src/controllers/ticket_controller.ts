@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import { BadRequestError, NotAuthorizedError, NotFoundError } from '@expasshub/utils';
 import Ticket from '../models/ticket_model';
 import rabbit from '../rabbit';
-import TicketCreatedEventHandler  from '../events/ticket_created';
-import TicketUpdatedEventHandler from '../events/ticket_updated';
-import TicketDeletdEventHandler from '../events/ticket_deleted';
+import { ticketCreatedQueue }  from '../events/producers/ticket_created';
+import { ticketUpdatedQueue }from '../events/producers/ticket_updated';
+import { ticketDeletedQueue } from '../events/producers/ticket_deleted';
+import { version } from 'uuid';
 
 
 class TicketController {
@@ -16,15 +17,17 @@ class TicketController {
         try{
             const { title, price } = req.body;
             const userId = req.currentUser!.id;
-            const ticket = Ticket.build({ title, price, userId });
+            const version = 0;
+            const ticket = Ticket.build({ title, price, userId, version });
             await ticket.save();
             console.log(ticket);
-            await TicketCreatedEventHandler.publishTicketCreated(rabbit, {
+            await ticketCreatedQueue.publish(rabbit, {
                 id: ticket.id,
                 title: ticket.title,
                 price: ticket.price,
+                version: ticket.version,
                 userId: ticket.userId,
-            })
+            });
             res.status(201).json({ status: "success", message: "ticker successfully created", object: ticket })
         
         }catch(err) {
@@ -60,11 +63,12 @@ class TicketController {
 
         await ticket.delete();
 
-        await TicketDeletdEventHandler.publishTicketDeleted(rabbit, {
+        await ticketDeletedQueue.publish(rabbit, {
             id: ticket.id,
             title: ticket.title,
             price: ticket.price,
             userId: ticket.userId,
+            version: ticket.version,
         });
         res.json({ status: 'success', message: 'ticket deleted', object: null });
     }
@@ -81,14 +85,16 @@ class TicketController {
         }
 
         const { title, price } = req.body;
+        ++ticket.version;
         ticket.title = title;
         ticket.price = price;
         await ticket.update();
-        await TicketUpdatedEventHandler.publishTicketUpdated(rabbit, {
+        await ticketUpdatedQueue.publish(rabbit, {
             id: ticket.id,
             title: ticket.title,
             price: ticket.price,
             userId: ticket.userId,
+            version: ticket.version
         });
 
         res.json({ status: 'success', message: 'ticket updated', object: ticket });
