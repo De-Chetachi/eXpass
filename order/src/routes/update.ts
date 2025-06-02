@@ -28,7 +28,7 @@ router.put("/api/orders/cancel/:orderId", requireAuth, async (req, res, next) =>
     await order.update();
 
     //emit order cancelled event
-    await orderUpdatedQueue.publish(rabbit, {
+    orderUpdatedQueue.publish(rabbit, {
         id: order.id,
         userId: order.userId,
         status: OrderStatus.OrderCancelled,

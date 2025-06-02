@@ -27,7 +27,7 @@ router.delete("/api/orders/:orderId", requireAuth, async (req, res, next) => {
         throw new Error('error populating ticket');
     }
 
-    await orderDeletedQueue.publish(rabbit, {
+    orderDeletedQueue.publish(rabbit, {
         id: order.id,
         userId: order.userId,
         status: OrderStatus.OrderCancelled,
