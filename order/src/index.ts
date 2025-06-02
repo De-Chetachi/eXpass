@@ -39,6 +39,8 @@ client.connect().then( async ()=>{
             version INT NOT NULL
         );
 
+        DROP TABLE IF EXISTS orders;
+
         CREATE TABLE IF NOT EXISTS orders (
             id VARCHAR(225) PRIMARY KEY,
             userId VARCHAR(225) NOT NULL,

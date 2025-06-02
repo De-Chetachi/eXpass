@@ -22,12 +22,12 @@ app.use(currentUser);
 
 app.use(getAllRouter);
 app.use(createRouter);
+app.use(getRouter);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     console.log(req.path, req.method);
     next();
 });
-//app.use(getRouter);
 //app.use(getAllRouter);
 app.use(errorHandler);
 

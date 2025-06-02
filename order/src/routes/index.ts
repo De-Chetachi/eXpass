@@ -11,7 +11,7 @@ router.get("/api/orders", requireAuth, async (req: Request, res: Response) => {
     //find the orders
     const orders = await Order.find({ userId: req.currentUser!.id });
     for (let order of orders) {
-        order.populate();
+        await order.populate();
     }
 
     res.status(200).json({ status: "success", message: "orders successfully retrieved", object: orders });

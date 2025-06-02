@@ -52,7 +52,7 @@ export class Order {
             tikid = this.ticket
          }
        
-        await client.query('INSERT INTO orders (id, ticketid, userid, status, expiresat, version) VALUES ($1, $2, $3, $4, $5);',
+        await client.query('INSERT INTO orders (id, ticketid, userid, status, expiresat, version) VALUES ($1, $2, $3, $4, $5, $6);',
             [this.id, tikid, this.userId, this.status, this.expiresAt, this.version]
         );
     }
@@ -116,16 +116,14 @@ export class Order {
             const condition = `${key.toLowerCase()} = $${++index}`;
             where.push(condition);
         }
-        const sql = 'SELECT * FROM orders WHERE ' + where.join(' AND ');
-        console.log(sql);
-        const orders =  await client.query(sql + ';', values);
-
+        const sql = 'SELECT * FROM orders WHERE ' + where.join(' AND ') + ';';
+        const orders =  await client.query(sql, values);
         return orders.rows.map((row) => {
             const order = new Order(row);
             order.ticket = row.ticketid;
             order.userId = row.userid;
             return order;
-        })
+        });
     }
 
     static async findAll() {

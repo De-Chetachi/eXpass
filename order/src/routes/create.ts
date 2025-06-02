@@ -11,12 +11,10 @@ const router = express.Router();
 router.post('/api/orders/:ticketId', requireAuth, async (req: Request, res: Response) => {
     const ticketId = req.params.ticketId;
     //find the ticket
-    console.log(ticketId);
-    const ticket = await Ticket.findById(ticketId)
+    const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
         throw new NotFoundError();
     }
-
     //make sure that it is available
     if (await ticket.isReserved()) {
         throw new BadRequestError('ticket is already reserved');
@@ -24,10 +22,13 @@ router.post('/api/orders/:ticketId', requireAuth, async (req: Request, res: Resp
 
     //create an order
     const userId = req.currentUser!.id;
-    const order = await Order.build({ userId, ticket })
+    const order = await Order.build({ userId, ticket });
     await order.populate();
+    console.log('order populated:', order);
     await order.save();
     //emit order created event
+
+
     if (!(order.ticket instanceof Ticket)){
         throw new Error('error populating ticket');
     }

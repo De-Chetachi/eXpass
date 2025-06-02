@@ -8,8 +8,6 @@ const router = express.Router();
 
 router.get("/api/orders/:orderId", requireAuth, async (req, res, next) => {
     const orderId = req.params.orderId;
-    console.log(orderId);
-
     //find the order
     const order = await Order.findById(orderId);
     if (!order) {
@@ -18,7 +16,7 @@ router.get("/api/orders/:orderId", requireAuth, async (req, res, next) => {
     if (order.userId !== req.currentUser!.id) {
         throw new NotAuthorizedError();
     }
-    order.populate();
+    await order.populate();
 
     res.status(200).json({ status: "success", message: "order successfully retrieved", object: order });
 });
